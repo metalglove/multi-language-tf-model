@@ -1,0 +1,4 @@
+.vs
+CPP/tensorflow
+CPP/build
+python/tf2.5-env
