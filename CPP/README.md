@@ -1,5 +1,5 @@
 # TensorFlow 2.5 in C++
-Install bazel https://docs.bazel.build/versions/4.1.0/install.html <br>
+Install bazel https://docs.bazel.build/versions/3.7.2/install.html <br>
 Install needed tools
 ![tools.png](tools.png)
 
