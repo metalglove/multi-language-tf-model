@@ -11,9 +11,10 @@ if(NOT EXISTS ${CMAKE_SOURCE_DIR}/build)
 endif()
 
 include_directories(tensorflow/include)
-link_directories(tensorflow/lib)
+find_library(TENSORFLOW_LIBRARY tensorflow HINTS tensorflow/lib)
 
-add_executable (CPP src/main.cpp)
-target_link_libraries(CPP tensorflow)
+add_executable(CPP src/main.cpp)
+# target_link_libraries(CPP tensorflow)
+target_link_libraries(CPP PUBLIC ${TENSORFLOW_LIBRARY})
 
 configure_file(tensorflow/lib/tensorflow.dll ${CMAKE_CURRENT_BINARY_DIR}/tensorflow.dll COPYONLY)
