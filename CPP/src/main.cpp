@@ -1,8 +1,10 @@
 #include <iostream>
+#include "tensorflow/core/public/version.h"
+
 using namespace std;
 
-int main() 
+int main()
 {
-  cout << "Tensorflow version:  %s\n", 2.5;
+  cout << tf_git_version() << endl;
   return 0;
 }
