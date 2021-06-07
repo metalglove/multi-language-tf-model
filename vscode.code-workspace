@@ -1,10 +1,13 @@
 {
 	"folders": [
 		{
-			"path": "CPP"
+			"path": "C"
 		},
 		{
 			"path": "python"
+		},
+		{
+			"path": "CPP"
 		}
 	],
 	"settings": {}

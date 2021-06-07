@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required(VERSION 3.8)
 
-project("CPP")
+project("C")
 
 if(NOT EXISTS ${CMAKE_SOURCE_DIR}/tensorflow)
     make_directory(${CMAKE_SOURCE_DIR}/tensorflow)
@@ -55,5 +55,5 @@ endif()
 include_directories(tensorflow/include)
 link_directories(tensorflow/lib)
 
-add_executable (CPP src/CPP.cpp src/CPP.h)
-target_link_libraries(CPP tensorflow)
+add_executable (C src/main.c)
+target_link_libraries(C tensorflow)

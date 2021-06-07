@@ -1,6 +1,7 @@
 # TensorFlow 2.5 in C++
-Running the `cmake` command should suffice, but not yet tested.
+Install bazel https://docs.bazel.build/versions/4.1.0/install.html
 
-## Sources used
-https://www.tensorflow.org/install/lang_c
-https://github.com/Neargye/hello_tf_c_api
+Clone the TensorFlow repository
+```
+git clone --recursive https://github.com/tensorflow/tensorflow
+```
