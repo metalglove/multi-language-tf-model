@@ -9,9 +9,9 @@ Copy `downloadpath\cuda\lib\x64\cudnn*.lib` to `C:\Program Files\NVIDIA GPU Comp
 
 ![tools.png](tools.png)
 
-Clone the TensorFlow repository
+Clone the TensorFlow repository and prepare include and lib directories
 ```
-mkdir -p tensorflow/git/
+mkdir -p tensorflow/git/ tensorflow/include tensorflow/lib
 cd tensorflow/git
 git clone --recursive --branch r2.5 https://github.com/tensorflow/tensorflow
 cd tensorflow
