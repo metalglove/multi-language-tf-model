@@ -42,7 +42,7 @@ Copy `tensorflow.dll` and `tensorflow.lib` from `bazel-bin\tensorflow` to the li
 ```
 cp bazel-bin/tensorflow/tensorflow.dll ../../lib/
 cp bazel-bin/tensorflow/tensorflow.lib ../../lib/
-cp bazel-bin/tensorflow/include/tensorflow/ ../../include/
+cp -r bazel-bin/tensorflow/include/tensorflow/ ../../include/
 ```
 
 ## CMake Error
