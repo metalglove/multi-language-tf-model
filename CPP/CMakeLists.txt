@@ -4,6 +4,8 @@ project("CPP")
 
 if(NOT EXISTS ${CMAKE_SOURCE_DIR}/tensorflow)
     make_directory(${CMAKE_SOURCE_DIR}/tensorflow)
+    make_directory(${CMAKE_SOURCE_DIR}/tensorflow/include)
+    make_directory(${CMAKE_SOURCE_DIR}/tensorflow/lib)
 endif()
 
 if(NOT EXISTS ${CMAKE_SOURCE_DIR}/build)
