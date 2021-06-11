@@ -3,6 +3,6 @@
 
 int main() 
 {
-  printf("Tensorflow version:  %s\n", TF_Version());
+  printf("C TensorFlow version: %s\n", TF_Version());
   return 0;
 }

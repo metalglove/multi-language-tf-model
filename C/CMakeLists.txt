@@ -6,10 +6,6 @@ if(NOT EXISTS ${CMAKE_SOURCE_DIR}/tensorflow)
     make_directory(${CMAKE_SOURCE_DIR}/tensorflow)
 endif()
 
-if(NOT EXISTS ${CMAKE_SOURCE_DIR}/build)
-    make_directory(${CMAKE_SOURCE_DIR}/build)
-endif()
-
 if(UNIX AND NOT APPLE)
     if(NOT EXISTS ${CMAKE_SOURCE_DIR}/tensorflow/lib/libtensorflow.so)
         file(

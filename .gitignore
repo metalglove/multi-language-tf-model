@@ -2,9 +2,9 @@
 **/.vscode
 
 C/tensorflow
-C/build
+C/out
 
 python/tf2.5-env
 
-CPP/build
 CPP/tensorflow
+CPP/out

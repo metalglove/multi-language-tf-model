@@ -9,7 +9,7 @@ Active the environment.
 ```
 source tf2.5-env/Scripts/activate
 ```
-> NOTE: When on Windows run `tf2.5-env\Scripts\activate` instead.
+> NOTE: When on Windows run `tf2.5-env\Scripts\activate` instead (without source).
 
 Install the python requirements
 ```
