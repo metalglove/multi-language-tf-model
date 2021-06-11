@@ -38,7 +38,6 @@ cp bazel-bin/tensorflow/tensorflow.dll ../../lib/
 cp bazel-bin/tensorflow/tensorflow.lib ../../lib/
 cp -r bazel-bin/tensorflow/include/tensorflow/ ../../include/
 ```
-> After building the code with bazel, you might want to delete the 20GB of cached build files in your home directory under `C:\Users\USER\_bazel_USER`, where `USER` is your computer username.
 
 Running the code should output:
 ```
