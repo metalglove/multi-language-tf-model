@@ -16,31 +16,75 @@ Configure the bazel build in the tensorflow directory
 ./configure
 ```
 
-building with bazel (make sure you are in bash) <br>
-Build Dynamic-link libray (dll)
+To run the code, we first need to fix a lot of symbol errors due to the maximum symbol limit of 60000, which TensorFlow exceeds. <br>
+I have created a patch of the imports that are needed for the example code.
 ```
-bazel build --config=opt --config=cuda tensorflow:tensorflow.dll
+git apply win-10-tf-2-5.patch
 ```
 
-Build static import libraries (.lib)
+building with bazel (make sure you are in bash) <br>
+Build Dynamic-link libraries (dll) and import libraries (lib)
 ```
-bazel build --config=opt --config=cuda tensorflow:tensorflow.lib
+bazel build -c opt --copt=-nvcc_options=disable-warnings --define=no_tensorflow_py_deps=true --config=cuda tensorflow:tensorflow_cc.dll
+bazel build -c opt --copt=-nvcc_options=disable-warnings --define=no_tensorflow_py_deps=true --config=cuda tensorflow:tensorflow_cc.lib
+bazel build -c opt --copt=-nvcc_options=disable-warnings --define=no_tensorflow_py_deps=true --config=cuda tensorflow:tensorflow.dll
+bazel build -c opt --copt=-nvcc_options=disable-warnings --define=no_tensorflow_py_deps=true --config=cuda tensorflow:tensorflow.lib
 ```
 
 Build header files
 ```
-bazel build --config=opt --config=cuda tensorflow:install_headers
+bazel build -c opt --copt=-nvcc_options=disable-warnings --define=no_tensorflow_py_deps=true --config=cuda tensorflow:install_headers
 ```
 
 Copy `tensorflow.dll` and `tensorflow.lib` from `bazel-bin\tensorflow` to the lib folder. Lastly, copy the headers to the include folder.
 ```
 cp bazel-bin/tensorflow/tensorflow.dll ../../lib/
+cp bazel-bin/tensorflow/tensorflow_cc.dll ../../lib/
 cp bazel-bin/tensorflow/tensorflow.lib ../../lib/
-cp -r bazel-bin/tensorflow/include/tensorflow/ ../../include/
+cp bazel-bin/tensorflow/tensorflow_cc.lib ../../lib/
+cp -r bazel-bin/tensorflow/include/ ../../
 ```
 
 Running the code should output:
 ```
-2021-06-11 11:02:34.147258: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library cudart64_110.dll
-C++ TensorFlow version: 2.5.0, Git version: v2.5.0-17-g15d5b930d7e  
+2021-06-12 01:57:47.796411: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library cudart64_110.dll
+C++ TensorFlow version: 2.5.0, Git version: v2.5.0-17-g15d5b930d7e
+2021-06-12 01:57:47.926756: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX AVX2
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2021-06-12 01:57:47.935211: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library nvcuda.dll
+2021-06-12 01:57:48.003359: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1733] Found device 0 with properties:
+pciBusID: 0000:01:00.0 name: GeForce RTX 2080 computeCapability: 7.5
+coreClock: 1.815GHz coreCount: 46 deviceMemorySize: 8.00GiB deviceMemoryBandwidth: 417.23GiB/s
+2021-06-12 01:57:48.003508: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library cudart64_110.dll
+2021-06-12 01:57:48.010542: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library cublas64_11.dll
+2021-06-12 01:57:48.010620: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library cublasLt64_11.dll
+2021-06-12 01:57:48.014320: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library cufft64_10.dll
+2021-06-12 01:57:48.016270: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library curand64_10.dll
+2021-06-12 01:57:48.021208: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library cusolver64_11.dll
+2021-06-12 01:57:48.025003: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library cusparse64_11.dll
+2021-06-12 01:57:48.026319: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library cudnn64_8.dll
+2021-06-12 01:57:48.026511: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1871] Adding visible gpu devices: 0
+2021-06-12 01:57:48.482789: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1258] Device interconnect StreamExecutor with strength 1 edge matrix:
+2021-06-12 01:57:48.483014: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1264]      0
+2021-06-12 01:57:48.484041: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1277] 0:   N
+2021-06-12 01:57:48.484287: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1418] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 5961 MB memory) -> physical GPU (device: 0, name: GeForce RTX 2080, pci bus id: 0000:01:00.0, compute capability: 7.5)
+---------------------------------
+5 + 3 = 8
+---------------------------------
 ```
+> Sometimes the code does not want to run in debug mode, try putting it on Release mode.
+
+## Help
+Fixing unresolved symbol errors <br>
+Example error:
+```
+Severity	Code	Description	Project	File	Line	Suppression State
+Error	LNK2019	unresolved external symbol "public: __cdecl tensorflow::ClientSession::ClientSession(class tensorflow::Scope const &)" (??0ClientSession@tensorflow@@QEAA@AEBVScope@1@@Z) referenced in function main	
+...\multi-language-tf-model\CPP\out\build\x64-Debug\multi-language-tf-model	...\multi-language-tf-model\CPP\out\build\x64-Debug\main.cpp.obj	1	
+```
+Add `#include "tensorflow/core/platform/macros.h"` to the top of the file and add the `TF_EXPORT` macro infront of any symbols which provide errors when building.
+Example (`CPP\tensorflow\git\tensorflow\tensorflow\cc\client\client_session.h`): <br>
+![client_session.png](client_session.png)
+
+## Sources used
+https://dkjoi.medium.com/tf2-4-dll-with-gpu-support-for-3090-in-windows-305126bc0d17

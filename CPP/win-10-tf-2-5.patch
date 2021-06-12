@@ -1,0 +1,281 @@
+diff --git a/configure b/configure
+index e43908e39da..3e9d03385d9 100755
+--- a/configure
++++ b/configure
+@@ -4,7 +4,7 @@ set -e
+ set -o pipefail
+ 
+ if [ -z "$PYTHON_BIN_PATH" ]; then
+-  PYTHON_BIN_PATH=$(which python3 || which python || true)
++  PYTHON_BIN_PATH=$(which python || true)
+ fi
+ 
+ # Set all env variables
+diff --git a/tensorflow/BUILD b/tensorflow/BUILD
+index 3ef74d742ef..c32b97bdc8a 100644
+--- a/tensorflow/BUILD
++++ b/tensorflow/BUILD
+@@ -1037,6 +1037,9 @@ tf_cc_shared_object(
+         "//tensorflow/c:c_api",
+         "//tensorflow/c/eager:c_api",
+         "//tensorflow/cc:cc_ops",
++        "//tensorflow/cc:array_ops",
++        "//tensorflow/cc:const_op",
++        "//tensorflow/cc:math_ops",
+         "//tensorflow/cc:client_session",
+         "//tensorflow/cc:scope",
+         "//tensorflow/core:tensorflow",
+diff --git a/tensorflow/cc/client/client_session.h b/tensorflow/cc/client/client_session.h
+index a661319b074..7d6eb34589f 100644
+--- a/tensorflow/cc/client/client_session.h
++++ b/tensorflow/cc/client/client_session.h
+@@ -24,6 +24,7 @@ limitations under the License.
+ #include "tensorflow/cc/framework/ops.h"
+ #include "tensorflow/cc/framework/scope.h"
+ #include "tensorflow/core/public/session_options.h"
++#include "tensorflow/core/platform/macros.h"
+ 
+ namespace tensorflow {
+ 
+@@ -50,7 +51,7 @@ struct ThreadPoolOptions;
+ ///
+ ///     Status s = session.Run({ {a, {1}} }, {c}, &outputs);
+ ///     if (!s.ok()) { ... }
+-class ClientSession {
++TF_EXPORT class ClientSession {
+  public:
+   /// A data type to represent feeds to a Run call.
+   ///
+@@ -61,41 +62,42 @@ class ClientSession {
+ 
+   /// Create a new session to evaluate the graph contained in `scope` by
+   /// connecting to the TensorFlow runtime specified by `target`.
+-  ClientSession(const Scope& scope, const string& target);
++  TF_EXPORT ClientSession(const Scope& scope, const string& target);
+ 
+   /// Same as above, but use the empty string ("") as the target specification.
+-  explicit ClientSession(const Scope& scope);
++  TF_EXPORT explicit ClientSession(const Scope& scope);
+ 
+   /// Create a new session, configuring it with `session_options`.
+-  ClientSession(const Scope& scope, const SessionOptions& session_options);
++  TF_EXPORT ClientSession(const Scope& scope,
++                         const SessionOptions& session_options);
+ 
+-  ~ClientSession();
++  TF_EXPORT ~ClientSession();
+ 
+   /// Evaluate the tensors in `fetch_outputs`. The values are returned as
+   /// `Tensor` objects in `outputs`. The number and order of `outputs` will
+   /// match `fetch_outputs`.
+-  Status Run(const std::vector<Output>& fetch_outputs,
++  TF_EXPORT Status Run(const std::vector<Output>& fetch_outputs,
+              std::vector<Tensor>* outputs) const;
+ 
+   /// Same as above, but use the mapping in `inputs` as feeds.
+-  Status Run(const FeedType& inputs, const std::vector<Output>& fetch_outputs,
++  TF_EXPORT Status Run(const FeedType& inputs, const std::vector<Output>& fetch_outputs,
+              std::vector<Tensor>* outputs) const;
+ 
+   /// Same as above. Additionally runs the operations ins `run_outputs`.
+-  Status Run(const FeedType& inputs, const std::vector<Output>& fetch_outputs,
++  TF_EXPORT Status Run(const FeedType& inputs, const std::vector<Output>& fetch_outputs,
+              const std::vector<Operation>& run_outputs,
+              std::vector<Tensor>* outputs) const;
+ 
+   /// Use `run_options` to turn on performance profiling. `run_metadata`, if not
+   /// null, is filled in with the profiling results.
+-  Status Run(const RunOptions& run_options, const FeedType& inputs,
++  TF_EXPORT Status Run(const RunOptions& run_options, const FeedType& inputs,
+              const std::vector<Output>& fetch_outputs,
+              const std::vector<Operation>& run_outputs,
+              std::vector<Tensor>* outputs, RunMetadata* run_metadata) const;
+ 
+   /// Same as above. Additionally allows user to provide custom threadpool
+   /// implementation via ThreadPoolOptions.
+-  Status Run(const RunOptions& run_options, const FeedType& inputs,
++  TF_EXPORT Status Run(const RunOptions& run_options, const FeedType& inputs,
+              const std::vector<Output>& fetch_outputs,
+              const std::vector<Operation>& run_outputs,
+              std::vector<Tensor>* outputs, RunMetadata* run_metadata,
+diff --git a/tensorflow/cc/framework/ops.h b/tensorflow/cc/framework/ops.h
+index 649c979ecc6..8d5a5343077 100644
+--- a/tensorflow/cc/framework/ops.h
++++ b/tensorflow/cc/framework/ops.h
+@@ -23,6 +23,7 @@ limitations under the License.
+ #include "tensorflow/core/graph/graph.h"
+ #include "tensorflow/core/lib/hash/hash.h"
+ #include "tensorflow/core/lib/strings/strcat.h"
++#include "tensorflow/core/platform/macros.h"
+ 
+ namespace tensorflow {
+ 
+@@ -34,10 +35,10 @@ class Output;
+ /// @{
+ 
+ /// Represents a node in the computation graph.
+-class Operation {
++TF_EXPORT class Operation {
+  public:
+-  Operation() : node_(nullptr) {}
+-  explicit Operation(Node* n);
++  TF_EXPORT Operation() : node_(nullptr) {}
++  TF_EXPORT explicit Operation(Node* n);
+ 
+   int32 num_inputs() const { return node_->num_inputs(); }
+   DataType input_type(int32 o) const { return node_->input_type(o); }
+@@ -96,7 +97,7 @@ struct OutputHash {
+ };
+ 
+ /// Represents a tensor value that can be used as an operand to an Operation.
+-class Input {
++TF_EXPORT class Input {
+  public:
+   /// Initializer enables constructing an Input object from various kinds of C++
+   /// constants such as simple primitive constants and nested initializer lists
+@@ -117,7 +118,7 @@ class Input {
+       tensor = t;
+     }
+ 
+-    Initializer(const Tensor& t) : tensor(t) {}  // NOLINT(runtime/explicit)
++    TF_EXPORT Initializer(const Tensor& t) : tensor(t) {}  // NOLINT(runtime/explicit)
+ 
+     /// Construct from a scalar value and an explicit shape
+     template <typename T, typename = typename std::enable_if<
+@@ -167,7 +168,7 @@ class Input {
+     /// initializer lists, so such invalid initializers cannot be disallowed at
+     /// compile time. This function performs checks to make sure that the nested
+     /// initializer list is indeed a valid multi-dimensional tensor.
+-    Initializer(const std::initializer_list<Initializer>& v);
++    TF_EXPORT Initializer(const std::initializer_list<Initializer>& v);
+ 
+     // START_SKIP_DOXYGEN
+     template <typename T, bool = std::is_convertible<T, std::string>::value>
+diff --git a/tensorflow/cc/framework/scope.h b/tensorflow/cc/framework/scope.h
+index 368c5026db4..aa9b9b7e2fc 100644
+--- a/tensorflow/cc/framework/scope.h
++++ b/tensorflow/cc/framework/scope.h
+@@ -27,6 +27,7 @@ limitations under the License.
+ #include "tensorflow/core/common_runtime/graph_constructor.h"
+ #include "tensorflow/core/lib/core/status.h"
+ #include "tensorflow/core/lib/gtl/array_slice.h"
++#include "tensorflow/core/platform/macros.h"
+ 
+ namespace tensorflow {
+ 
+@@ -97,9 +98,9 @@ struct CompositeOpScopes;
+ /// op-constructor functions on the same `Scope` object.
+ class Scope {
+  public:
+-  Scope(const Scope& other);
+-  ~Scope();
+-  Scope& operator=(const Scope& other);
++  TF_EXPORT Scope(const Scope& other);
++  TF_EXPORT ~Scope();
++  TF_EXPORT Scope& operator=(const Scope& other);
+ 
+   // The following functions are for users making graphs. They return brand new
+   // scopes, or scopes derived from an existing scope object.
+@@ -107,13 +108,13 @@ class Scope {
+   /// Return a new scope.
+   /// This creates a new graph and all operations constructed in this graph
+   /// should use the returned object as the "root" scope.
+-  static Scope NewRootScope();
++  TF_EXPORT static Scope NewRootScope();
+ 
+   /// Return a new scope. Ops created with this scope will have
+   /// `name/child_scope_name` as the prefix. The actual name will be unique
+   /// in the current scope. All other properties are inherited from the current
+   /// scope. If `child_scope_name` is empty, the `/` is elided.
+-  Scope NewSubScope(const string& child_scope_name) const;
++  TF_EXPORT Scope NewSubScope(const string& child_scope_name) const;
+ 
+   /// Return a new scope. All ops created within the returned scope will have
+   /// names of the form `name/StrCat(fragments...)[_suffix]`
+@@ -137,7 +138,7 @@ class Scope {
+ 
+   /// Return a new scope. All ops created within the returned scope will have
+   /// the device field set to 'device'.
+-  Scope WithDevice(const string& device) const;
++  TF_EXPORT Scope WithDevice(const string& device) const;
+ 
+   /// Returns a new scope.  All ops created within the returned scope will have
+   /// their assigned device set to `assigned_device`.
+@@ -177,7 +178,7 @@ class Scope {
+   /// Note: The status object is shared between all children of this scope.
+   /// If the resulting status is not Status::OK() and exit_on_error_ is set on
+   /// this scope, this function exits by calling LOG(FATAL).
+-  void UpdateStatus(const Status& s) const;
++  TF_EXPORT void UpdateStatus(const Status& s) const;
+ 
+   // START_SKIP_DOXYGEN
+ 
+@@ -189,7 +190,7 @@ class Scope {
+ 
+   CompositeOpScopes GetCompositeOpScopes(const string& composite_op_name) const;
+ 
+-  bool ok() const;
++  TF_EXPORT bool ok() const;
+ 
+   // TODO(skyewm): Graph is not part of public API
+   Graph* graph() const;
+diff --git a/tensorflow/core/public/session_options.h b/tensorflow/core/public/session_options.h
+index c10cc889ed2..618fc72c43c 100644
+--- a/tensorflow/core/public/session_options.h
++++ b/tensorflow/core/public/session_options.h
+@@ -19,13 +19,14 @@ limitations under the License.
+ #include <string>
+ #include "tensorflow/core/platform/types.h"
+ #include "tensorflow/core/protobuf/config.pb.h"
++#include "tensorflow/core/platform/macros.h"
+ 
+ namespace tensorflow {
+ 
+ class Env;
+ 
+ /// Configuration information for a Session.
+-struct SessionOptions {
++TF_EXPORT struct SessionOptions {
+   /// The environment to use.
+   Env* env;
+ 
+@@ -57,7 +58,7 @@ struct SessionOptions {
+   /// Configuration options.
+   ConfigProto config;
+ 
+-  SessionOptions();
++  TF_EXPORT SessionOptions();
+ };
+ 
+ }  // end namespace tensorflow
+diff --git a/tensorflow/tools/def_file_filter/def_file_filter.py.tpl b/tensorflow/tools/def_file_filter/def_file_filter.py.tpl
+index 47d9214b1cd..1a69295c263 100644
+--- a/tensorflow/tools/def_file_filter/def_file_filter.py.tpl
++++ b/tensorflow/tools/def_file_filter/def_file_filter.py.tpl
+@@ -276,7 +276,25 @@ def main():
+     def_fp.write("\t ?MaybeSavedModelDirectory@tensorflow@@YA_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z\n")
+     def_fp.write("\t ?_TensorShapeProto_default_instance_@tensorflow@@3VTensorShapeProtoDefaultTypeInternal@1@A\n")
+     def_fp.write("\t ?_GraphDef_default_instance_@tensorflow@@3VGraphDefDefaultTypeInternal@1@A\n")
+-
++    def_fp.write("\t ??0Placeholder@ops@tensorflow@@QEAA@AEBVScope@2@W4DataType@2@@Z\n")
++    def_fp.write("\t ??0Initializer@Input@tensorflow@@QEAA@AEBV?$initializer_list@UInitializer@Input@tensorflow@@@std@@@Z\n")
++    def_fp.write("\t ??0Operation@tensorflow@@QEAA@PEAVNode@1@@Z\n")
++    def_fp.write("\t ??0Input@tensorflow@@QEAA@AEBV?$initializer_list@UInitializer@Input@tensorflow@@@std@@@Z\n")
++    def_fp.write("\t ??0Add@ops@tensorflow@@QEAA@AEBVScope@2@VInput@2@1@Z\n")
++    def_fp.write("\t ?graph_as_shared_ptr@Scope@tensorflow@@QEBA?AV?$shared_ptr@VGraph@tensorflow@@@std@@XZ\n")
++    def_fp.write("\t ??0ConfigProto@tensorflow@@QEAA@$$QEAV01@@Z\n")
++    def_fp.write("\t ?NewRootScope@Scope@tensorflow@@SA?AV12@XZ\n")
++    def_fp.write("\t ??0?$TensorShapeBase@VTensorShape@tensorflow@@@tensorflow@@QEAA@V?$initializer_list@_J@std@@@Z\n")
++    def_fp.write("\t ?Const@ops@tensorflow@@YA?AVOutput@2@AEBVScope@2@AEBUInitializer@Input@2@@Z\n")
++    def_fp.write("\t ??_7GraphDef@tensorflow@@6B@\n")
++    def_fp.write("\t ??0GraphDef@tensorflow@@QEAA@$$QEAV01@@Z\n")
++    def_fp.write("\t ?WithOpNameImpl@Scope@tensorflow@@AEBA?AV12@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z\n")
++    def_fp.write("\t ??$WithOpName@PEBD@Scope@tensorflow@@QEBA?AV01@PEBD@Z\n")
++    def_fp.write("\t ?ToGraphDef@Scope@tensorflow@@QEBA?AVStatus@2@PEAVGraphDef@2@@Z\n")
++    def_fp.write("\t ??0MatMul@ops@tensorflow@@QEAA@AEBVScope@2@VInput@2@1AEBUAttrs@012@@Z\n")
++    def_fp.write("\t ??0Placeholder@ops@tensorflow@@QEAA@AEBVScope@2@W4DataType@2@AEBUAttrs@012@@Z\n")
++    def_fp.write("\t ??1Scope@tensorflow@@QEAA@XZ\n")
++    
+     # Each symbols returned by undname matches the same position in candidates.
+     # We compare on undname but use the decorated name from candidates.
+     dupes = 0
