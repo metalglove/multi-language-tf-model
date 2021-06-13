@@ -8,5 +8,5 @@ C TensorFlow version: 2.5.0
 ```
 
 ## Sources used
-https://www.tensorflow.org/install/lang_c
+https://www.tensorflow.org/install/lang_c <br>
 https://github.com/Neargye/hello_tf_c_api
