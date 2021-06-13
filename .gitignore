@@ -5,6 +5,7 @@ C/tensorflow
 C/out
 
 python/tf2.5-env
+python/__pycache__
 
 CPP/tensorflow
 CPP/out
