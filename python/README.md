@@ -20,11 +20,7 @@ python -m pip install -r requirements.txt
 ```
 
 ## Running the code
-Running the code should print out the TensorFlow version, the training loop, and a Matplotlib figure presenting the LinearRegressionModel and synthetic data.
-```
-python .\main.py
-```
-Output:
+Running the code should print out the TensorFlow version, the training loop, and a Matplotlib figure presenting the LinearRegressionModel and synthetic data:
 ```
 2021-06-14 03:03:05.679769: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library cudart64_110.dll
 Python TensorFlow version: 2.5.0
