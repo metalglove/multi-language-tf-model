@@ -106,3 +106,6 @@ _________________________________________________________________
 ```
 And the Matplotlib Figure should look like this, synthetic data in blue and regression in red:
 ![Linear Regression Model Figure](LinearRegressionModel_Figure.png)
+
+## Sources used
+https://www.tensorflow.org/guide/saved_model
