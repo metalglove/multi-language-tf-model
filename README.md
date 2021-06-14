@@ -10,7 +10,8 @@ Unzip and move cudnn libraries to cuda folder. <br>
 Copy `downloadpath\cuda\bin\cudnn*.dll` to `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.2\bin`. <br>
 Copy `downloadpath\cuda\include\cudnn*.h` to `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.2\include`. <br>
 Copy `downloadpath\cuda\lib\x64\cudnn*.lib` to `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.2\lib\x64`. <br>
-Each directory (`Python`, `C`, `CPP`) contains a `README.md` file explaining additional installation and build steps for the specific language.
+Each directory (`Python`, `C`, `CPP`) contains a `README.md` file explaining additional installation and build steps for the specific language. <br>
+Install CMake for Visual studio https://docs.microsoft.com/en-us/cpp/build/cmake-projects-in-visual-studio?view=msvc-160 <br>
 
 ## LinearRegressionModel 
 The Python version of the multi model script is used to create a LinearRegressionModel for a set of predefined parameters.
