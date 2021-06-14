@@ -27,14 +27,21 @@ Epoch 10/10
 ...
 Saving LinearRegressionModel...
 Saved LinearRegressionModel!
-Model: "linear_regression"
-_________________________________________________________________
-Layer (type)                 Output Shape              Param #
-=================================================================
-Total params: 2
-Trainable params: 2
-Non-trainable params: 0
-_________________________________________________________________
+Saving generated dataset...
+Saved generated dataset!
+...
+signature_def['serving_default']:
+  The given SavedModel SignatureDef contains the following input(s):
+    inputs['x'] tensor_info:
+        dtype: DT_FLOAT
+        shape: unknown_rank
+        name: serving_default_x:0
+  The given SavedModel SignatureDef contains the following output(s):
+    outputs['output'] tensor_info:
+        dtype: DT_FLOAT
+        shape: unknown_rank
+        name: StatefulPartitionedCall:0
+  Method name is: tensorflow/serving/predict
 ```
 And present a Matplotlib Figure of the LinearRegression in red over the synthetic data in blue.
 ![Linear Regression Model Figure](python/LinearRegressionModel_Figure.png)
@@ -51,9 +58,18 @@ C TensorFlow version: 2.5.0
 Running the code in Visual Studio should output:
 ```
 2021-06-11 11:02:34.147258: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library cudart64_110.dll
-C++ TensorFlow version: 2.5.0, Git version: v2.5.0-17-g15d5b930d7e  
+C++ TensorFlow version: 2.5.0, Git version: v2.5.0-17-g15d5b930d7e 
+2021-06-14 02:31:49.395636: I tensorflow/cc/saved_model/reader.cc:38] Reading SavedModel from: ../../../../LinearRegressionModel/
+2021-06-14 02:31:49.396337: I tensorflow/cc/saved_model/reader.cc:90] Reading meta graph with tags { serve }
+2021-06-14 02:31:49.396391: I tensorflow/cc/saved_model/reader.cc:132] Reading SavedModel debug info (if present) from: ../../../../LinearRegressionModel/
+...
+2021-06-14 02:31:49.909530: I tensorflow/cc/saved_model/loader.cc:206] Restoring SavedModel bundle.
+2021-06-14 02:31:50.122484: I tensorflow/cc/saved_model/loader.cc:190] Running initialization op on SavedModel bundle at path: ../../../../LinearRegressionModel/
+2021-06-14 02:31:50.124970: I tensorflow/cc/saved_model/loader.cc:277] SavedModel load for tags { serve }; Status: success: OK. Took 729334 microseconds. 
 ```
-> NOTE: Not yet implemented!
+And present a Matplotlib Figure of the LinearRegression in red over the data generated from Python in blue.
+![Linear Regression Model Figure](CPP/LinearRegressionModel_Figure.png)
 
 ## Sources used
-https://www.tensorflow.org/install
+https://www.tensorflow.org/install <br>
+https://www.tensorflow.org/guide/saved_model <br>
