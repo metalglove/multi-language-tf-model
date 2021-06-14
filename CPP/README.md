@@ -1,12 +1,20 @@
 # TensorFlow 2.5 in C++
 The C++ version of the multi model script is used to load the LinearRegressionModel for inference on the generated dataset from the python code.
+This script also uses [matplotlibcpp](https://github.com/lava/matplotlib-cpp) with the main Python3 installation.
 
 ## Setup
-Install bazel https://docs.bazel.build/versions/3.7.2/install.html <br>
-
 ![tools.png](tools.png)
+Install bazel https://docs.bazel.build/versions/3.7.2/install.html <br>
+Install Python 3 https://www.python.org/downloads/release/python-3810/ <br>
+During the Python installation, make sure to select `Add Python to PATH`.
+![win_installer.png](win_installer.png)
 
-Clone the TensorFlow repository and prepare include and lib directories
+And install matplotlib and numpy from the terminal
+```
+pip install matplotlib numpy
+```
+
+In the CPP directory, clone the TensorFlow repository and prepare include and lib directories
 ```
 mkdir -p tensorflow/git/ tensorflow/include tensorflow/lib
 cd tensorflow/git

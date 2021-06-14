@@ -145,6 +145,9 @@ Defined Functions:
 ```
 And the Matplotlib Figure should look like this, synthetic data in blue and regression in red:
 ![Linear Regression Model Figure](LinearRegressionModel_Figure.png)
-
+> NOTE: The `SavedModel` is saved in the root directory of the repository when run from Visual Studio.
+> The CPP script expects to find the model in the root directory too. 
+> If you have ran `main.py` from the terminal in the `python` directory, then the model is saved in the `python` directory.
+> So, try running it from the root directory `python ./python/main.py`.
 ## Sources used
 https://www.tensorflow.org/guide/saved_model
