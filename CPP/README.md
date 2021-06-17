@@ -4,6 +4,7 @@ This script also uses [matplotlibcpp](https://github.com/lava/matplotlib-cpp) wi
 
 ## Setup
 ![tools.png](tools.png)
+
 Install bazel https://docs.bazel.build/versions/3.7.2/install.html <br>
 Install Python 3 https://www.python.org/downloads/release/python-3810/ <br>
 During the Python installation, make sure to select `Add Python to PATH`.

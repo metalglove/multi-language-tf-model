@@ -58,8 +58,8 @@ C TensorFlow version: 2.5.0
 ### C++
 Running the code in Visual Studio should output:
 ```
-2021-06-11 11:02:34.147258: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library cudart64_110.dll
-C++ TensorFlow version: 2.5.0, Git version: v2.5.0-17-g15d5b930d7e 
+2021-06-14 02:31:49.288685: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library cudart64_110.dll
+C++ TensorFlow version: 2.5.0, Git version: v2.5.0-17-g15d5b930d7e
 2021-06-14 02:31:49.395636: I tensorflow/cc/saved_model/reader.cc:38] Reading SavedModel from: ../../../../LinearRegressionModel/
 2021-06-14 02:31:49.396337: I tensorflow/cc/saved_model/reader.cc:90] Reading meta graph with tags { serve }
 2021-06-14 02:31:49.396391: I tensorflow/cc/saved_model/reader.cc:132] Reading SavedModel debug info (if present) from: ../../../../LinearRegressionModel/
